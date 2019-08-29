@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.codemobile.cmscb.models.Mobile
+import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperCallback
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
 import com.codemobile.mobilephonebuyersguideapp.activity.OnSortMobileListener
@@ -39,6 +37,10 @@ class FavouriteFragment(private var mMobileArray: List<Mobile>,
         rvMobiles.itemAnimator = DefaultItemAnimator()
         rvMobiles.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
 
+        val callback = CustomItemTouchHelperCallback(mAdapter)
+        val itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(rvMobiles)
+
         mAdapter.submitList(mMobileArray)
     }
 
@@ -57,6 +59,10 @@ class FavouriteFragment(private var mMobileArray: List<Mobile>,
         }
 
         listener.onChangeData(mMobileArray)
+    }
+
+    override fun onSwipedRemove(mobile: Mobile) {
+        listener.onChangeData(mMobileArray.filterNot { it.id == mobile.id })
     }
 
     override fun sortByPriceLow2High() {

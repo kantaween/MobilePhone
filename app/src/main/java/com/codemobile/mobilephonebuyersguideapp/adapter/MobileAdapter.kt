@@ -66,4 +66,5 @@ class MobileItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 interface OnMobileClickListener {
     fun onMobileClick(mobile: Mobile)
     fun onClickFavourite(ivFavouriteImage: ImageView, mobile: Mobile)
+    fun onSwipedRemove(mobile: Mobile)
 }

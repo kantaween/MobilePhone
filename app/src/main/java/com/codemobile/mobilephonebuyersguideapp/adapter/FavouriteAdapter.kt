@@ -6,11 +6,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.codemobile.cmscb.models.Mobile
+import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperListener
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.extension.setImageUrl
 
 class FavouriteAdapter(private var listener : OnMobileClickListener)
-    : RecyclerView.Adapter<FavouriteItemViewHolder>() {
+    : RecyclerView.Adapter<FavouriteItemViewHolder>(),
+    CustomItemTouchHelperListener {
 
     val mobiles: List<Mobile>
         get() = _mobiles
@@ -24,12 +26,20 @@ class FavouriteAdapter(private var listener : OnMobileClickListener)
     }
 
     override fun getItemCount(): Int {
-        return _mobiles.count()
+        return mobiles.count()
     }
 
     fun submitList(list: List<Mobile>) {
         _mobiles = list.filter { it.favourite }
         notifyDataSetChanged()
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        return false
+    }
+
+    override fun onItemDismiss(position: Int) {
+        listener.onSwipedRemove(mobiles[position])
     }
 
 }

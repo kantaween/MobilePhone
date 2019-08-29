@@ -17,16 +17,13 @@ import com.codemobile.mobilephonebuyersguideapp.activity.OnSortMobileListener
 import com.codemobile.mobilephonebuyersguideapp.activity.onChangeFavouriteListener
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileAdapter
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
-import com.google.gson.Gson
 
 class MobileFragment(private var mMobileArray: List<Mobile>,
                      private var listener: onChangeFavouriteListener
 ): Fragment(), OnMobileClickListener, OnSortMobileListener {
 
-
     private lateinit var rvMobiles: RecyclerView
     lateinit var mAdapter: MobileAdapter
-    private var gson = Gson()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_main, container, false)
@@ -59,6 +56,8 @@ class MobileFragment(private var mMobileArray: List<Mobile>,
         }
         listener.onChangeData(mMobileArray)
     }
+
+    override fun onSwipedRemove(mobile: Mobile) {}
 
     override fun sortByPriceLow2High() {
         val list : List<Mobile> = mMobileArray.sortedBy {
