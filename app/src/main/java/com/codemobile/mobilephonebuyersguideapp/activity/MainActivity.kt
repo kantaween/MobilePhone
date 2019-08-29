@@ -1,5 +1,6 @@
 package com.codemobile.mobilephonebuyersguideapp.activity
 
+import android.content.ContextWrapper
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +13,9 @@ import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.SectionsPagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.pixplicity.easyprefs.library.Prefs
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,10 +33,34 @@ class MainActivity : AppCompatActivity(), onChangeFavouriteListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Prefs.Builder()
+            .setContext(this)
+            .setMode(ContextWrapper.MODE_PRIVATE)
+            .setPrefsName(packageName)
+            .setUseDefaultSharedPreference(true)
+            .build()
+
+        loadInitData()
+        handleViewPager()
         sort = findViewById(R.id.iv_sort)
         sort.setOnClickListener() { createAlertDialogWithRadioButtonGroup() }
 
         loadMobile()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val gson = Gson()
+        val json = gson.toJson(mMobileArray)
+        Prefs.putString("Favourite", json)
+    }
+
+    private fun loadInitData() {
+        val json: String? = Prefs.getString("Favourite", null)
+        val gson = GsonBuilder().create()
+        json?.let {
+            mMobileArray = gson.fromJson(it, Array<Mobile>::class.java).toList()
+        }
     }
 
     private fun handleViewPager() {
@@ -49,16 +77,22 @@ class MainActivity : AppCompatActivity(), onChangeFavouriteListener {
 
     private fun createAlertDialogWithRadioButtonGroup() {
 
-        val builder = AlertDialog.Builder(this@MainActivity)
+        val builder = AlertDialog.Builder(this)
 
         builder.setSingleChoiceItems(sortList, -1, DialogInterface.OnClickListener { dialog, item ->
             when (item) {
-                0 ->
+                0 ->{
                     sectionsPagerAdapter?.listnerAll?.sortByPriceLow2High()
-                1 ->
+                    sectionsPagerAdapter?.listnerFav?.sortByPriceLow2High()
+                }
+                1 ->{
                     sectionsPagerAdapter?.listnerAll?.sortByPriceHigh2Low()
-                2 ->
+                    sectionsPagerAdapter?.listnerFav?.sortByPriceHigh2Low()
+                }
+                2 ->{
                     sectionsPagerAdapter?.listnerAll?.sortByRating()
+                    sectionsPagerAdapter?.listnerFav?.sortByRating()
+                }
             }
             mAlertDialog.dismiss()
         })
@@ -73,9 +107,14 @@ class MainActivity : AppCompatActivity(), onChangeFavouriteListener {
         }
 
         override fun onResponse(call: Call<List<Mobile>>, response: Response<List<Mobile>>) {
-            response.body()?.let {
-                mMobileArray = it
-                handleViewPager()
+            val res = response.body()
+            mMobileArray.forEach { prefData ->
+                res?.single { it.id == prefData.id }?.favourite = prefData.favourite
+            }
+            res?.let {
+                mMobileArray = res
+                sectionsPagerAdapter?.listnerAll?.onBindChangData(mMobileArray)
+                sectionsPagerAdapter?.listnerFav?.onBindChangData(mMobileArray)
             }
         }
     }
