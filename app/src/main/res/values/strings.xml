@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Mobile Phone Buyer\'s Guide App</string>
+    <string name="tab_text_1">All</string>
+    <string name="tab_text_2">Favourite</string>
+</resources>
