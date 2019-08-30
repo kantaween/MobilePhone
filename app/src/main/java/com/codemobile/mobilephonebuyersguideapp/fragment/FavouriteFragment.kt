@@ -62,7 +62,8 @@ class FavouriteFragment(private var mMobileArray: List<Mobile>,
     }
 
     override fun onSwipedRemove(mobile: Mobile) {
-        listener.onChangeData(mMobileArray.filterNot { it.id == mobile.id })
+        mMobileArray.single { it.id == mobile.id }.favourite = false
+        listener.onChangeData(mMobileArray)
     }
 
     override fun sortByPriceLow2High() {
