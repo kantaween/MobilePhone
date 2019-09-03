@@ -12,6 +12,7 @@ import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.SectionsPagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.fragment.FavouriteFragment
 import com.codemobile.mobilephonebuyersguideapp.fragment.MobileFragment
+import com.codemobile.mobilephonebuyersguideapp.models.FragmentModel
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenterInterface
 import com.google.android.material.tabs.TabLayout
@@ -22,14 +23,17 @@ class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivit
 
     private val presenter = MainActivityPresenter(this)
 
-    private lateinit var mFragmentList: List<Fragment>
-    private lateinit var mMobileFragment: MobileFragment
-    private lateinit var mFavouriteFragment: FavouriteFragment
+    private lateinit var mFragmentList: List<FragmentModel>
+    private lateinit var mMobileFragment: FragmentModel
+    private lateinit var mFavouriteFragment: FragmentModel
     private lateinit var viewPager: ViewPager
     private lateinit var tabs: TabLayout
     private lateinit var sortImage: ImageView
     private lateinit var mAlertDialog: AlertDialog
     private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
+
+    private val MOBILE_FRAGMENT_TITLE = "All"
+    private val FAVOURITE_FRAGMENT_TITLE = "Favourite"
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -64,8 +68,8 @@ class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivit
     }
 
     private fun initFragment() {
-        mMobileFragment = MobileFragment.newInstance(this)
-        mFavouriteFragment = FavouriteFragment.newInstance(this)
+        mMobileFragment = FragmentModel(MOBILE_FRAGMENT_TITLE, MobileFragment.newInstance(this))
+        mFavouriteFragment = FragmentModel(FAVOURITE_FRAGMENT_TITLE, FavouriteFragment.newInstance(this))
         mFragmentList = listOf(mMobileFragment, mFavouriteFragment)
     }
 
@@ -84,8 +88,8 @@ class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivit
         if (mAlertDialog.isShowing)
             mAlertDialog.dismiss()
 
-        mMobileFragment.onBindChangData(mobileList)
-        mFavouriteFragment.onBindChangData(mobileList)
+        (mMobileFragment.fragment as? MobileFragment)?.onBindChangData(mobileList)
+        (mFavouriteFragment.fragment as? FavouriteFragment)?.onBindChangData(mobileList)
     }
 
     override fun setFavourite(mobile: Mobile) {

@@ -4,23 +4,18 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.codemobile.mobilephonebuyersguideapp.R
-
-private val TAB_TITLES = arrayOf(
-    R.string.tab_text_1,
-    R.string.tab_text_2
-)
+import com.codemobile.mobilephonebuyersguideapp.models.FragmentModel
 
 class SectionsPagerAdapter(private val context: Context,
                            fm: FragmentManager,
-                           private val fragmentList: List<Fragment>) : FragmentPagerAdapter(fm) {
+                           private val fragmentList: List<FragmentModel>) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
-        return fragmentList[position]
+        return fragmentList[position].fragment
     }
 
     override fun getPageTitle(position: Int): CharSequence? {
-        return context.resources.getString(TAB_TITLES[position])
+        return fragmentList[position].title
     }
 
     override fun getCount(): Int {
