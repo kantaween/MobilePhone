@@ -15,13 +15,15 @@ import com.codemobile.mobilephonebuyersguideapp.fragment.MobileFragment
 import com.codemobile.mobilephonebuyersguideapp.models.FragmentModel
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenterInterface
+import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
+import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import com.google.android.material.tabs.TabLayout
 import com.pixplicity.easyprefs.library.Prefs
 
 
 class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivityPresenterInterface {
 
-    private val presenter = MainActivityPresenter(this)
+    private val presenter = MainActivityPresenter(this, ApiManager.mobileService)
 
     private lateinit var mFragmentList: List<FragmentModel>
     private lateinit var mMobileFragment: FragmentModel

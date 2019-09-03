@@ -13,6 +13,7 @@ import com.codemobile.mobilephonebuyersguideapp.adapter.MobileImagePagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenterInterface
+import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
 
 class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInterface {
 
@@ -28,7 +29,7 @@ class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInter
         }
     }
 
-    private val presenter = MobileInfoActivityPresenter(this)
+    private val presenter = MobileInfoActivityPresenter(this, ApiManager.mobileService)
 
     private lateinit var vpImage: ViewPager
     private lateinit var tvMobileName: TextView

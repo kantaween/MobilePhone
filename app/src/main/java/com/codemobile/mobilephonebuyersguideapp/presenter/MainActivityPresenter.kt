@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
+import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.pixplicity.easyprefs.library.Prefs
@@ -12,7 +13,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivityPresenter(private val view: MainActivityPresenterInterface) {
+class MainActivityPresenter(private val view: MainActivityPresenterInterface, private val service: MobileApiService) {
 
     private val ALERTDIALOG_SORT_LOW2HIGH = 0
     private val ALERTDIALOG_SORT_HIGH2LOW = 1
@@ -32,7 +33,7 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface) {
     }
 
     fun loadNewData() {
-        ApiManager.mobileService.getMobileList().enqueue(mobileListCallback)
+        service.getMobileList().enqueue(mobileListCallback)
     }
 
     fun savePrefs() {

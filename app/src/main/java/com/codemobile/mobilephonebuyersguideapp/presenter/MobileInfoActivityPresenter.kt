@@ -6,11 +6,12 @@ import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
+import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterInterface) {
+class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterInterface, private val service: MobileApiService) {
 
     private lateinit var mImageList: List<MobileImage>
     private lateinit var mMobile: Mobile
@@ -26,7 +27,7 @@ class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterI
     }
 
     private fun loadMobileImages(id: Int) {
-        ApiManager.mobileService.getMobileImage(id).enqueue(mobileImageCallback)
+        service.getMobileImage(id).enqueue(mobileImageCallback)
     }
 
     private val mobileImageCallback = object : Callback<List<MobileImage>> {
