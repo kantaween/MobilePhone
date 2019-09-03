@@ -13,6 +13,7 @@ class MobileImageFragmentPresenter(private var view: MobileImageFragmentPresente
         if (!url.contains("http", true)) {
             imageURL = "https://$url"
         }
+        imageURL = url
     }
 }
 
