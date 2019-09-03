@@ -1,4 +1,4 @@
-package com.codemobile.cmscb.models
+package com.codemobile.mobilephonebuyersguideapp.models
 
 import android.os.Parcel
 import android.os.Parcelable
@@ -22,8 +22,7 @@ data class Mobile(
         parcel.readDouble(),
         parcel.readString().toString(),
         parcel.readByte() != 0.toByte()
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(brand)
