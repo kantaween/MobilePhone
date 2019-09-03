@@ -7,21 +7,26 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.codemobile.mobilephonebuyersguideapp.R
+import com.codemobile.mobilephonebuyersguideapp.presenter.MobileImageFragmentPresenter
+import com.codemobile.mobilephonebuyersguideapp.presenter.MobileImageFragmentPresenterInterface
 import kotlinx.android.synthetic.main.fragment_mobile_image.*
 
-class MobileImageFragment(private var imageURL: String): Fragment() {
+class MobileImageFragment(private var imageURL: String): Fragment(), MobileImageFragmentPresenterInterface {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_mobile_image, container, false)
     }
 
+    private val presenter = MobileImageFragmentPresenter(this)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!imageURL.contains("http", true)) {
-            imageURL = "https://$imageURL"
-        }
-        context?.let {
-            Glide.with(it).load(imageURL).into(iv_info_image)
+        presenter.setFragment(imageURL)
+    }
+
+    override fun setImage(url: String) {
+        context?.apply {
+            Glide.with(this).load(url).into(iv_info_image)
         }
     }
 }

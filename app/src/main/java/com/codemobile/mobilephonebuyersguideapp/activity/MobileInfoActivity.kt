@@ -1,33 +1,34 @@
 package com.codemobile.mobilephonebuyersguideapp.activity
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.codemobile.cmscb.models.Mobile
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileImagePagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
-import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import kotlin.collections.ArrayList
+import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenter
+import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenterInterface
 
-class MobileInfoActivity : AppCompatActivity() {
+class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInterface {
 
     companion object {
-        private const val EXTRA_MOBILE = "mobile"
+        const val EXTRA_MOBILE = "mobile"
 
-        fun startActivity(context: Context, mobile: Mobile? = null) {
-            var intent = Intent(context, MobileInfoActivity::class.java)
-            intent.putExtra(EXTRA_MOBILE, mobile)
-            context.startActivity(intent)
+        fun startActivity(context: Context?, mobile: Mobile? = null) {
+            context?.apply {
+                val intent = Intent(context, MobileInfoActivity::class.java)
+                intent.putExtra(EXTRA_MOBILE, mobile)
+                this.startActivity(intent)
+            }
         }
     }
+
+    private val presenter = MobileInfoActivityPresenter(this)
 
     private lateinit var vpImage: ViewPager
     private lateinit var tvMobileName: TextView
@@ -35,40 +36,32 @@ class MobileInfoActivity : AppCompatActivity() {
     private lateinit var tvMobilePrice: TextView
     private lateinit var tvMobileRating: TextView
     private lateinit var tvMobileDiscription: TextView
-    private var mImageList: ArrayList<MobileImage>? = ArrayList<MobileImage>()
 
-    private val mobileImageCallback = object : Callback<ArrayList<MobileImage>> {
-        override fun onFailure(call: Call<ArrayList<MobileImage>>, t: Throwable) {
-            Log.e("Call Api", "$t")
-        }
-
-        override fun onResponse(call: Call<ArrayList<MobileImage>>, response: Response<ArrayList<MobileImage>>) {
-            mImageList = response.body()
-            mImageList?.let {
-                vpImage.adapter = MobileImagePagerAdapter(supportFragmentManager, it)
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_moblie_info)
+        onView()
+        setActBar()
+        presenter.init(intent)
+    }
 
-        val actionBar = supportActionBar
-
-        actionBar!!.setDisplayHomeAsUpEnabled(true)
-
+    private fun onView() {
         vpImage = findViewById(R.id.vp_info_image)
         tvMobileName = findViewById(R.id.tv_info_name)
         tvMobileBrand = findViewById(R.id.tv_info_brand)
         tvMobilePrice = findViewById(R.id.tv_info_price)
         tvMobileRating = findViewById(R.id.tv_info_rating)
         tvMobileDiscription = findViewById(R.id.tv_info_discription)
+    }
 
-        val mobile = intent.getParcelableExtra<Mobile>(EXTRA_MOBILE) ?: return
+    private fun setActBar() {
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
-        loadMobileImages(mobile.id)
-        showSongInformation(mobile)
+    override fun setViewPagerAdapter(imageList: List<MobileImage>) {
+        vpImage.adapter = MobileImagePagerAdapter(supportFragmentManager, imageList)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -76,15 +69,12 @@ class MobileInfoActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loadMobileImages(id: Int) {
-        ApiManager.mobileService.getMobileImage(id).enqueue(mobileImageCallback)
-    }
-
-    private fun showSongInformation(mobile: Mobile) {
+    @SuppressLint("SetTextI18n")
+    override fun setContent(mobile: Mobile) {
         tvMobileName.text = mobile.name
         tvMobileBrand.text = mobile.brand
-        tvMobilePrice.text = "Price: $${mobile.price}"
-        tvMobileRating.text = "Rating: ${mobile.rating}"
+        tvMobilePrice.text = getString(R.string.price_text, mobile.price)
+        tvMobileRating.text = getString(R.string.rating_text, mobile.rating)
         tvMobileDiscription.text = mobile.description
     }
 }

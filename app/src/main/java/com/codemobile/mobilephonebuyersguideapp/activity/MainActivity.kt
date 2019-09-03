@@ -1,37 +1,37 @@
 package com.codemobile.mobilephonebuyersguideapp.activity
 
 import android.content.ContextWrapper
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.codemobile.cmscb.models.Mobile
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.SectionsPagerAdapter
-import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
+import com.codemobile.mobilephonebuyersguideapp.fragment.FavouriteFragment
+import com.codemobile.mobilephonebuyersguideapp.fragment.MobileFragment
+import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
+import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenterInterface
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.pixplicity.easyprefs.library.Prefs
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity(), onChangeFavouriteListener {
+class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivityPresenterInterface {
 
-    private var mMobileArray: List<Mobile> = listOf<Mobile>()
-    private lateinit var sort: ImageView
+    private val presenter = MainActivityPresenter(this)
+
+    private lateinit var mFragmentList: List<Fragment>
+    private lateinit var mMobileFragment: MobileFragment
+    private lateinit var mFavouriteFragment: FavouriteFragment
+    private lateinit var viewPager: ViewPager
+    private lateinit var tabs: TabLayout
+    private lateinit var sortImage: ImageView
     private lateinit var mAlertDialog: AlertDialog
-    private var sortList = arrayOf<String>("Price low to high", "Price high to low", "Rating 5-1")
+    private lateinit var sectionsPagerAdapter: SectionsPagerAdapter
 
-    var sectionsPagerAdapter : SectionsPagerAdapter?=null
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         Prefs.Builder()
             .setContext(this)
@@ -40,99 +40,63 @@ class MainActivity : AppCompatActivity(), onChangeFavouriteListener {
             .setUseDefaultSharedPreference(true)
             .build()
 
-        loadInitData()
-        handleViewPager()
-        sort = findViewById(R.id.iv_sort)
-        sort.setOnClickListener() { createAlertDialogWithRadioButtonGroup() }
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        loadMobile()
+        onView()
+        initFragment()
+        handleViewPager()
+        createAlertDialog()
+
+        presenter.loadLocalData()
+        presenter.loadNewData()
     }
 
     override fun onStop() {
         super.onStop()
-        val gson = Gson()
-        val json = gson.toJson(mMobileArray)
-        Prefs.putString("Favourite", json)
+        presenter.savePrefs()
     }
 
-    private fun loadInitData() {
-        val json: String? = Prefs.getString("Favourite", null)
-        val gson = GsonBuilder().create()
-        json?.let {
-            mMobileArray = gson.fromJson(it, Array<Mobile>::class.java).toList()
-        }
+    private fun onView() {
+        viewPager = findViewById(R.id.view_pager)
+        tabs = findViewById(R.id.tabs)
+        sortImage = findViewById(R.id.iv_sort)
+    }
+
+    private fun initFragment() {
+        mMobileFragment = MobileFragment.newInstance(this)
+        mFavouriteFragment = FavouriteFragment.newInstance(this)
+        mFragmentList = listOf(mMobileFragment, mFavouriteFragment)
     }
 
     private fun handleViewPager() {
-        sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager, mMobileArray, this)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager, mFragmentList)
         viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
     }
 
-    private fun loadMobile() {
-        ApiManager.mobileService.getMobileList().enqueue(mobileListCallback)
+    private fun createAlertDialog() {
+        mAlertDialog = presenter.initDialogBuilder(this).create()
+        sortImage.setOnClickListener { mAlertDialog.show() }
     }
 
-    private fun createAlertDialogWithRadioButtonGroup() {
-
-        val builder = AlertDialog.Builder(this)
-
-        builder.setSingleChoiceItems(sortList, -1, DialogInterface.OnClickListener { dialog, item ->
-            when (item) {
-                0 ->{
-                    sectionsPagerAdapter?.listnerAll?.sortByPriceLow2High()
-                    sectionsPagerAdapter?.listnerFav?.sortByPriceLow2High()
-                }
-                1 ->{
-                    sectionsPagerAdapter?.listnerAll?.sortByPriceHigh2Low()
-                    sectionsPagerAdapter?.listnerFav?.sortByPriceHigh2Low()
-                }
-                2 ->{
-                    sectionsPagerAdapter?.listnerAll?.sortByRating()
-                    sectionsPagerAdapter?.listnerFav?.sortByRating()
-                }
-            }
+    override fun updateData(mobileList: List<Mobile>) {
+        if (mAlertDialog.isShowing)
             mAlertDialog.dismiss()
-        })
-        mAlertDialog = builder.create()
-        mAlertDialog.show()
 
+        mMobileFragment.onBindChangData(mobileList)
+        mFavouriteFragment.onBindChangData(mobileList)
     }
 
-    private val mobileListCallback = object : Callback<List<Mobile>> {
-        override fun onFailure(call: Call<List<Mobile>>, t: Throwable) {
-            Log.e("API_Call_Error", "$t")
-        }
-
-        override fun onResponse(call: Call<List<Mobile>>, response: Response<List<Mobile>>) {
-            val res = response.body()
-            mMobileArray.forEach { prefData ->
-                res?.single { it.id == prefData.id }?.favourite = prefData.favourite
-            }
-            res?.let {
-                mMobileArray = res
-                sectionsPagerAdapter?.listnerAll?.onBindChangData(mMobileArray)
-                sectionsPagerAdapter?.listnerFav?.onBindChangData(mMobileArray)
-            }
-        }
+    override fun setFavourite(mobile: Mobile) {
+        presenter.setFavourite(mobile)
     }
 
-    override fun onChangeData(mobileArray: List<Mobile>) {
-        mMobileArray = mobileArray
-        sectionsPagerAdapter?.listnerAll?.onBindChangData(mobileArray)
-        sectionsPagerAdapter?.listnerFav?.onBindChangData(mobileArray)
+    fun getMobileList(): List<Mobile> {
+        return presenter.getMobileList()
     }
 }
 
-interface OnSortMobileListener {
-    fun sortByPriceLow2High()
-    fun sortByPriceHigh2Low()
-    fun sortByRating()
-    fun onBindChangData(mobileArray: List<Mobile>)
-}
-
-interface onChangeFavouriteListener {
-    fun onChangeData(mobileArray: List<Mobile>)
+interface OnChangeFavouriteListener {
+    fun setFavourite(mobile: Mobile)
 }

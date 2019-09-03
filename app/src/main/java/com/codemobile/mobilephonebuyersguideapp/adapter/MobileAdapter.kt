@@ -5,33 +5,39 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.codemobile.cmscb.models.Mobile
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
+import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperListener
+import com.codemobile.mobilephonebuyersguideapp.extension.context
 import com.codemobile.mobilephonebuyersguideapp.extension.setImageUrl
 
-class MobileAdapter(private var listener : OnMobileClickListener)
-    : RecyclerView.Adapter<MobileItemViewHolder>() {
+class MobileAdapter(private var listener: OnMobileClickListener) : RecyclerView.Adapter<MobileItemViewHolder>(),
+    CustomItemTouchHelperListener {
 
-    val mobiles: List<Mobile>
-        get() = _mobiles
-
-    private var _mobiles: List<Mobile> = listOf<Mobile>()
+    private var mMobileList: List<Mobile> = listOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MobileItemViewHolder(parent)
 
     override fun onBindViewHolder(holder: MobileItemViewHolder, position: Int) {
-        holder.bind(_mobiles[position], listener)
+        holder.bind(mMobileList[position], listener)
     }
 
     override fun getItemCount(): Int {
-        return _mobiles.count()
+        return mMobileList.count()
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int): Boolean {
+        return false
+    }
+
+    override fun onItemDismiss(position: Int) {
+        (listener as? OnFavouriteClickListener)?.onSwipedRemove(mMobileList[position])
     }
 
     fun submitList(list: List<Mobile>) {
-        _mobiles = list
+        mMobileList = list
         notifyDataSetChanged()
     }
-
 }
 
 class MobileItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
@@ -45,11 +51,11 @@ class MobileItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private val tvMobileRating: TextView = itemView.findViewById(R.id.tv_mobile_rating)
     private val ivFavouriteImage: ImageView = itemView.findViewById(R.id.iv_favourite_image)
 
-    fun bind(mobile: Mobile, listener : OnMobileClickListener) {
+    fun bind(mobile: Mobile, listener: OnMobileClickListener) {
         tvMobileName.text = mobile.name
         tvMobileDiscription.text = mobile.description
-        tvMobilePrice.text = "price: $${mobile.price}"
-        tvMobileRating.text = "rating: ${mobile.rating}"
+        tvMobilePrice.text = context().getString(R.string.price_text, mobile.price)
+        tvMobileRating.text = context().getString(R.string.rating_text, mobile.rating)
         ivMobileImage.setImageUrl(mobile.thumbImageURL)
 
         if (mobile.favourite) {
@@ -59,12 +65,15 @@ class MobileItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         }
 
         itemView.setOnClickListener { listener.onMobileClick(mobile) }
-        ivFavouriteImage.setOnClickListener { listener.onClickFavourite(ivFavouriteImage ,mobile) }
+        ivFavouriteImage.setOnClickListener { listener.onChangeFavourite(mobile) }
     }
 }
 
 interface OnMobileClickListener {
     fun onMobileClick(mobile: Mobile)
-    fun onClickFavourite(ivFavouriteImage: ImageView, mobile: Mobile)
+    fun onChangeFavourite(mobile: Mobile)
+}
+
+interface OnFavouriteClickListener : OnMobileClickListener {
     fun onSwipedRemove(mobile: Mobile)
 }
