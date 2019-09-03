@@ -1,5 +1,6 @@
 package com.codemobile.mobilephonebuyersguideapp.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -8,10 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperListener
-import com.codemobile.mobilephonebuyersguideapp.extension.context
 import com.codemobile.mobilephonebuyersguideapp.extension.setImageUrl
 
-class MobileAdapter(private var listener: OnMobileClickListener) : RecyclerView.Adapter<MobileItemViewHolder>(),
+class MobileAdapter(private var listener: OnMobileClickListener, private var context: Context?) : RecyclerView.Adapter<MobileItemViewHolder>(),
     CustomItemTouchHelperListener {
 
     private var mMobileList: List<Mobile> = listOf()
@@ -19,7 +19,9 @@ class MobileAdapter(private var listener: OnMobileClickListener) : RecyclerView.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MobileItemViewHolder(parent)
 
     override fun onBindViewHolder(holder: MobileItemViewHolder, position: Int) {
-        holder.bind(mMobileList[position], listener)
+        context?.apply {
+            holder.bind(this, mMobileList[position], listener)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -51,11 +53,11 @@ class MobileItemViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     private val tvMobileRating: TextView = itemView.findViewById(R.id.tv_mobile_rating)
     private val ivFavouriteImage: ImageView = itemView.findViewById(R.id.iv_favourite_image)
 
-    fun bind(mobile: Mobile, listener: OnMobileClickListener) {
+    fun bind(context: Context, mobile: Mobile, listener: OnMobileClickListener) {
         tvMobileName.text = mobile.name
         tvMobileDiscription.text = mobile.description
-        tvMobilePrice.text = context().getString(R.string.price_text, mobile.price)
-        tvMobileRating.text = context().getString(R.string.rating_text, mobile.rating)
+        tvMobilePrice.text = context.getString(R.string.price_text, mobile.price)
+        tvMobileRating.text = context.getString(R.string.rating_text, mobile.rating)
         ivMobileImage.setImageUrl(mobile.thumbImageURL)
 
         if (mobile.favourite) {

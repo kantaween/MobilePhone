@@ -2,6 +2,6 @@
     <string name="app_name">Mobile Phone Buyer\'s Guide App</string>
     <string name="tab_text_1">All</string>
     <string name="tab_text_2">Favourite</string>
-    <string name="price_text">Price: $%1$d</string>
-    <string name="rating_text">Rating: %1$d</string>
+    <string name="price_text">Price: $%1$.2f</string>
+    <string name="rating_text">Rating: %1$.1f</string>
 </resources>

@@ -46,7 +46,7 @@ class FavouriteFragment(
     }
 
     private fun initRecyclerView() {
-        mAdapter = MobileAdapter((this as OnMobileClickListener))
+        mAdapter = MobileAdapter((this as OnMobileClickListener), context)
         val callback = CustomItemTouchHelperCallback(mAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
 

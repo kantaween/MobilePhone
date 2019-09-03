@@ -47,7 +47,7 @@ class MobileFragment(
     }
 
     private fun initRecyclerView() {
-        mAdapter = MobileAdapter(this)
+        mAdapter = MobileAdapter(this, context)
         rvMobiles.adapter = mAdapter
         rvMobiles.layoutManager = LinearLayoutManager(context)
         rvMobiles.itemAnimator = DefaultItemAnimator()

@@ -22,7 +22,7 @@ class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterI
     }
 
     private fun getMobileList(intent: Intent) {
-        mMobile = intent.getParcelableExtra<Mobile>(MobileInfoActivity.EXTRA_MOBILE) ?: return
+        mMobile = intent.getParcelableExtra(MobileInfoActivity.EXTRA_MOBILE)
     }
 
     private fun loadMobileImages(id: Int) {
