@@ -27,6 +27,7 @@ data class Mobile(
     @SerializedName("thumbImageURL")
     val thumbImageURL: String,
 
+    @SerializedName("favourite")
     var favourite: Boolean = false
 
 ) : Parcelable

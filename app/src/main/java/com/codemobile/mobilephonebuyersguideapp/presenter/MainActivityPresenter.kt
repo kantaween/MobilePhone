@@ -1,7 +1,6 @@
 package com.codemobile.mobilephonebuyersguideapp.presenter
 
 import android.content.Context
-import android.content.DialogInterface
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
@@ -20,12 +19,12 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface) {
     private val ALERTDIALOG_SORT_RATING = 2
 
     private lateinit var mMobileArray: List<Mobile>
-    private var sortList = arrayOf<String>("Price low to high", "Price high to low", "Rating 5-1")
+    private var sortList = arrayOf("Price low to high", "Price high to low", "Rating 5-1")
 
     fun loadLocalData() {
         val gson = GsonBuilder().create()
         val json: String? = Prefs.getString("Favourite", null)
-        var dataArray: List<Mobile> = listOf<Mobile>()
+        var dataArray: List<Mobile> = listOf()
         json?.let {
             dataArray = gson.fromJson(it, Array<Mobile>::class.java).toList()
         }
@@ -45,7 +44,7 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface) {
     fun initDialogBuilder(context: Context): AlertDialog.Builder {
         val builder = AlertDialog.Builder(context)
 
-        builder.setSingleChoiceItems(this.sortList, -1, DialogInterface.OnClickListener { dialog, item ->
+        builder.setSingleChoiceItems(this.sortList, -1) { _, item ->
             mMobileArray = when (item) {
                 ALERTDIALOG_SORT_LOW2HIGH -> {
                     mMobileArray.sortedBy { it.price }
@@ -59,7 +58,7 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface) {
                 else -> mMobileArray
             }
             view.updateData(mMobileArray)
-        })
+        }
 
         return builder
     }
