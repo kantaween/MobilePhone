@@ -15,7 +15,8 @@
         <activity
                 android:name=".activity.MainActivity"
                 android:label="@string/app_name"
-                android:theme="@style/AppTheme.NoActionBar">
+                android:theme="@style/AppTheme.NoActionBar"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -23,7 +24,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.MobileInfoActivity" />
+        <activity android:name=".activity.MobileInfoActivity"
+                  android:screenOrientation="portrait"/>
 
     </application>
 
