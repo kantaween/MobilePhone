@@ -13,19 +13,14 @@ import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.activity.MainActivity
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
-import com.codemobile.mobilephonebuyersguideapp.activity.OnChangeFavouriteListener
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileAdapter
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
 
-class MobileFragment(
-    private var listener: OnChangeFavouriteListener
-) : Fragment(), OnMobileClickListener {
+class MobileFragment: Fragment(), OnMobileClickListener {
 
     companion object {
 
-        fun newInstance(listener: OnChangeFavouriteListener): MobileFragment {
-            return MobileFragment(listener)
-        }
+        fun newInstance(): MobileFragment = MobileFragment()
     }
 
     private lateinit var rvMobiles: RecyclerView
@@ -63,7 +58,7 @@ class MobileFragment(
     }
 
     override fun onChangeFavourite(mobile: Mobile) {
-        listener.setFavourite(mobile)
+        (context as? MainActivity)?.setFavourite(mobile)
     }
 
     fun onBindChangData(mobileList: List<Mobile>) {

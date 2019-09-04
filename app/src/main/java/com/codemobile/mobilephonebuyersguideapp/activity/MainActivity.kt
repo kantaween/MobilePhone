@@ -5,23 +5,21 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.SectionsPagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.fragment.FavouriteFragment
 import com.codemobile.mobilephonebuyersguideapp.fragment.MobileFragment
 import com.codemobile.mobilephonebuyersguideapp.models.FragmentModel
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
-import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import com.google.android.material.tabs.TabLayout
 import com.pixplicity.easyprefs.library.Prefs
 
 
-class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivityPresenterInterface {
+class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
 
     private val presenter = MainActivityPresenter(this, ApiManager.mobileService)
 
@@ -70,13 +68,13 @@ class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivit
     }
 
     private fun initFragment() {
-        mMobileFragment = FragmentModel(MOBILE_FRAGMENT_TITLE, MobileFragment.newInstance(this))
-        mFavouriteFragment = FragmentModel(FAVOURITE_FRAGMENT_TITLE, FavouriteFragment.newInstance(this))
+        mMobileFragment = FragmentModel(MOBILE_FRAGMENT_TITLE, MobileFragment.newInstance())
+        mFavouriteFragment = FragmentModel(FAVOURITE_FRAGMENT_TITLE, FavouriteFragment.newInstance())
         mFragmentList = listOf(mMobileFragment, mFavouriteFragment)
     }
 
     private fun handleViewPager() {
-        sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager, mFragmentList)
+        sectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager, mFragmentList)
         viewPager.adapter = sectionsPagerAdapter
         tabs.setupWithViewPager(viewPager)
     }
@@ -94,15 +92,11 @@ class MainActivity : AppCompatActivity(), OnChangeFavouriteListener, MainActivit
         (mFavouriteFragment.fragment as? FavouriteFragment)?.onBindChangData(mobileList)
     }
 
-    override fun setFavourite(mobile: Mobile) {
+    fun setFavourite(mobile: Mobile) {
         presenter.setFavourite(mobile)
     }
 
     fun getMobileList(): List<Mobile> {
         return presenter.getMobileList()
     }
-}
-
-interface OnChangeFavouriteListener {
-    fun setFavourite(mobile: Mobile)
 }

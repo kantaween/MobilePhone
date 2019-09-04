@@ -10,20 +10,17 @@ import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.activity.MainActivity
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
-import com.codemobile.mobilephonebuyersguideapp.activity.OnChangeFavouriteListener
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileAdapter
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnFavouriteClickListener
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
 import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperCallback
 
-class FavouriteFragment(
-    private var listener: OnChangeFavouriteListener
-) : Fragment(), OnFavouriteClickListener {
+class FavouriteFragment: Fragment(), OnFavouriteClickListener {
 
     companion object {
 
-        fun newInstance(listener: OnChangeFavouriteListener): FavouriteFragment {
-            return FavouriteFragment(listener)
+        fun newInstance(): FavouriteFragment {
+            return FavouriteFragment()
         }
     }
 
@@ -68,11 +65,11 @@ class FavouriteFragment(
     }
 
     override fun onChangeFavourite(mobile: Mobile) {
-        listener.setFavourite(mobile)
+        (context as? MainActivity)?.setFavourite(mobile)
     }
 
     override fun onSwipedRemove(mobile: Mobile) {
-        listener.setFavourite(mobile)
+        (context as? MainActivity)?.setFavourite(mobile)
     }
 
     fun onBindChangData(mobileList: List<Mobile>) {
