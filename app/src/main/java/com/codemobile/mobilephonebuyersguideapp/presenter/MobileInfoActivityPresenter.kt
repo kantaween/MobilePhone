@@ -2,10 +2,10 @@ package com.codemobile.mobilephonebuyersguideapp.presenter
 
 import android.content.Intent
 import android.util.Log
-import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
+import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileInfoActivityPresenterInterface
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
-import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
 import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,9 +42,4 @@ class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterI
             }
         }
     }
-}
-
-interface MobileInfoActivityPresenterInterface {
-    fun setViewPagerAdapter(imageList:List<MobileImage>)
-    fun setContent(mobile: Mobile)
 }

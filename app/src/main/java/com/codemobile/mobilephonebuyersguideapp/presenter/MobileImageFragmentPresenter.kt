@@ -1,5 +1,7 @@
 package com.codemobile.mobilephonebuyersguideapp.presenter
 
+import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileImageFragmentPresenterInterface
+
 class MobileImageFragmentPresenter(private var view: MobileImageFragmentPresenterInterface) {
 
     private lateinit var imageURL: String
@@ -15,8 +17,4 @@ class MobileImageFragmentPresenter(private var view: MobileImageFragmentPresente
         }
         imageURL = url
     }
-}
-
-interface MobileImageFragmentPresenterInterface {
-    fun setImage(url: String)
 }

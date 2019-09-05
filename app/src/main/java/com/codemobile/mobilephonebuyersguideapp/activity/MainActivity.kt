@@ -3,17 +3,19 @@ package com.codemobile.mobilephonebuyersguideapp.activity
 import android.content.ContextWrapper
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.SectionsPagerAdapter
+import com.codemobile.mobilephonebuyersguideapp.extension.showToast
 import com.codemobile.mobilephonebuyersguideapp.fragment.FavouriteFragment
 import com.codemobile.mobilephonebuyersguideapp.fragment.MobileFragment
+import com.codemobile.mobilephonebuyersguideapp.interfaces.MainActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.models.FragmentModel
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
-import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
 import com.google.android.material.tabs.TabLayout
 import com.pixplicity.easyprefs.library.Prefs
@@ -90,6 +92,10 @@ class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
 
         (mMobileFragment.fragment as? MobileFragment)?.onBindChangData(mobileList)
         (mFavouriteFragment.fragment as? FavouriteFragment)?.onBindChangData(mobileList)
+    }
+
+    override fun showErrorMessage(error: String) {
+        showToast(error)
     }
 
     fun setFavourite(mobile: Mobile) {

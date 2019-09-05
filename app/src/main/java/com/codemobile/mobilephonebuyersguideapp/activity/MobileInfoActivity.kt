@@ -10,9 +10,9 @@ import androidx.viewpager.widget.ViewPager
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileImagePagerAdapter
+import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileInfoActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenter
-import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
 
 class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInterface {
@@ -70,7 +70,6 @@ class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInter
         return true
     }
 
-    @SuppressLint("SetTextI18n")
     override fun setContent(mobile: Mobile) {
         tvMobileName.text = mobile.name
         tvMobileBrand.text = mobile.brand
