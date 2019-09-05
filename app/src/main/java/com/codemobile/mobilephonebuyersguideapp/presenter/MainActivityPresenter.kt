@@ -78,9 +78,7 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface, pr
     fun getMobileList(): List<Mobile> = mMobileArray
 
     private val mobileListCallback = object : Callback<List<Mobile>> {
-        override fun onFailure(call: Call<List<Mobile>>, t: Throwable) {
-            Log.e("API_Call_Error", "$t")
-            view.showErrorMessage(ERROR_MSG_ONLOAD_FAIL)
+        override fun onFailure(call: Call<List<Mobile>>, t: Throwable) {            view.showErrorMessage(ERROR_MSG_ONLOAD_FAIL)
         }
 
         override fun onResponse(call: Call<List<Mobile>>, response: Response<List<Mobile>>) {
