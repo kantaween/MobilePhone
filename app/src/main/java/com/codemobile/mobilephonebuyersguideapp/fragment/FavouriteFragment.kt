@@ -55,8 +55,8 @@ class FavouriteFragment: Fragment(), OnFavouriteClickListener {
     }
 
     private fun submitMobile() {
-        (context as? MainActivity)?.getMobileList()?.let { mobileList ->
-            mAdapter.submitList(mobileList.filter { it.favourite })
+        (context as? MainActivity)?.getFavouriteList()?.let { favouriteList ->
+            mAdapter.submitList(favouriteList)
         }
     }
 
@@ -72,8 +72,8 @@ class FavouriteFragment: Fragment(), OnFavouriteClickListener {
         (context as? MainActivity)?.setFavourite(mobile)
     }
 
-    fun onBindChangData(mobileList: List<Mobile>) {
+    fun onBindChangData(favouriteList: List<Mobile>) {
         if (::mAdapter.isInitialized)
-            mAdapter.submitList(mobileList.filter { it.favourite })
+            mAdapter.submitList(favouriteList)
     }
 }

@@ -3,7 +3,6 @@ package com.codemobile.mobilephonebuyersguideapp.activity
 import android.content.ContextWrapper
 import android.os.Bundle
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -36,6 +35,11 @@ class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
 
     private val MOBILE_FRAGMENT_TITLE = "All"
     private val FAVOURITE_FRAGMENT_TITLE = "Favourite"
+    private val SORT_PRICE_LOW_TO_HIGH_TEXT = "Price low to high"
+    private val SORT_PRICE_HIGH_TO_LOW_TEXT = "Price high to low"
+    private val SORT_RATING_TEXT = "Rating 5-1"
+
+    private var sortList = arrayOf(SORT_PRICE_LOW_TO_HIGH_TEXT, SORT_PRICE_HIGH_TO_LOW_TEXT, SORT_RATING_TEXT)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -82,16 +86,22 @@ class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
     }
 
     private fun createAlertDialog() {
-        mAlertDialog = presenter.initDialogBuilder(this).create()
+        val builder = AlertDialog.Builder(this)
+
+        builder.setSingleChoiceItems(this.sortList, -1) { _, item ->
+            presenter.handleSort(item)
+        }
+
+        mAlertDialog = builder.create()
         sortImage.setOnClickListener { mAlertDialog.show() }
     }
 
-    override fun updateData(mobileList: List<Mobile>) {
+    override fun updateData(mobileList: List<Mobile>, favouriteList: List<Mobile>) {
         if (mAlertDialog.isShowing)
             mAlertDialog.dismiss()
 
         (mMobileFragment.fragment as? MobileFragment)?.onBindChangData(mobileList)
-        (mFavouriteFragment.fragment as? FavouriteFragment)?.onBindChangData(mobileList)
+        (mFavouriteFragment.fragment as? FavouriteFragment)?.onBindChangData(favouriteList)
     }
 
     override fun showErrorMessage(error: String) {
@@ -104,5 +114,9 @@ class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
 
     fun getMobileList(): List<Mobile> {
         return presenter.getMobileList()
+    }
+
+    fun getFavouriteList(): List<Mobile> {
+        return presenter.getFavouriteList()
     }
 }
