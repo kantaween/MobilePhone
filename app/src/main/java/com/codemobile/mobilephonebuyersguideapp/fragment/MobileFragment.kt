@@ -19,7 +19,6 @@ import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
 class MobileFragment : Fragment(), OnMobileClickListener {
 
     companion object {
-
         fun newInstance(): MobileFragment = MobileFragment()
     }
 

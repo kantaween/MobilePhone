@@ -18,10 +18,7 @@ import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperCa
 class FavouriteFragment : Fragment(), OnFavouriteClickListener {
 
     companion object {
-
-        fun newInstance(): FavouriteFragment {
-            return FavouriteFragment()
-        }
+        fun newInstance(): FavouriteFragment = FavouriteFragment()
     }
 
     private lateinit var rvMobiles: RecyclerView
