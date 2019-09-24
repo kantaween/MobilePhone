@@ -4,7 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:weightSum="100">
 
 
     <LinearLayout
@@ -31,10 +32,10 @@
     </LinearLayout>
 
     <LinearLayout
-            android:layout_weight="65"
+            android:layout_weight="35"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp">
 
         <androidx.viewpager.widget.ViewPager
                 android:id="@+id/vp_info_image"
@@ -45,13 +46,13 @@
     </LinearLayout>
 
     <LinearLayout
-            android:layout_weight="35"
+            android:layout_weight="65"
             android:paddingTop="5dp"
             android:paddingStart="15dp"
             android:paddingEnd="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp">
 
         <LinearLayout
                 android:orientation="horizontal"
