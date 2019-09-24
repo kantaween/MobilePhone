@@ -15,7 +15,7 @@ import com.codemobile.mobilephonebuyersguideapp.adapter.OnFavouriteClickListener
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
 import com.codemobile.mobilephonebuyersguideapp.callback.CustomItemTouchHelperCallback
 
-class FavouriteFragment: Fragment(), OnFavouriteClickListener {
+class FavouriteFragment : Fragment(), OnFavouriteClickListener {
 
     companion object {
 
@@ -43,7 +43,7 @@ class FavouriteFragment: Fragment(), OnFavouriteClickListener {
     }
 
     private fun initRecyclerView() {
-        mAdapter = MobileAdapter((this as OnMobileClickListener), context)
+        mAdapter = MobileAdapter((this as OnMobileClickListener))
         val callback = CustomItemTouchHelperCallback(mAdapter)
         val itemTouchHelper = ItemTouchHelper(callback)
 

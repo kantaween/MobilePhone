@@ -16,7 +16,7 @@ import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileAdapter
 import com.codemobile.mobilephonebuyersguideapp.adapter.OnMobileClickListener
 
-class MobileFragment: Fragment(), OnMobileClickListener {
+class MobileFragment : Fragment(), OnMobileClickListener {
 
     companion object {
 
@@ -42,7 +42,7 @@ class MobileFragment: Fragment(), OnMobileClickListener {
     }
 
     private fun initRecyclerView() {
-        mAdapter = MobileAdapter(this, context)
+        mAdapter = MobileAdapter(this)
         rvMobiles.adapter = mAdapter
         rvMobiles.layoutManager = LinearLayoutManager(context)
         rvMobiles.itemAnimator = DefaultItemAnimator()

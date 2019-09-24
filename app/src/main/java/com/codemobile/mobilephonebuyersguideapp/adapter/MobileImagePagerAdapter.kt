@@ -6,13 +6,14 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.codemobile.mobilephonebuyersguideapp.fragment.MobileImageFragment
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 
-class MobileImagePagerAdapter(supportFragmentManager: FragmentManager, private val imageArray: List<MobileImage>) : FragmentPagerAdapter(supportFragmentManager) {
+class MobileImagePagerAdapter(supportFragmentManager: FragmentManager, private val imageList: List<MobileImage>) :
+    FragmentPagerAdapter(supportFragmentManager) {
 
     override fun getItem(position: Int): Fragment {
-        return MobileImageFragment(imageArray[position].url)
+        return MobileImageFragment(imageList[position].url)
     }
 
     override fun getCount(): Int {
-        return imageArray.count()
+        return imageList.count()
     }
 }
