@@ -4,6 +4,11 @@ import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileImageFragmentPr
 
 class MobileImageFragmentPresenter(private var view: MobileImageFragmentPresenterInterface) {
 
+    companion object {
+        private const val BEGIN_POSITION = 0
+        private const val FINAL_POSITION = 3
+    }
+
     private lateinit var imageURL: String
 
     fun setFragment(url: String) {
@@ -12,7 +17,7 @@ class MobileImageFragmentPresenter(private var view: MobileImageFragmentPresente
     }
 
     private fun reFormURL(url: String) {
-        if (!url.contains("http", true)) {
+        if (!url.substring(BEGIN_POSITION, FINAL_POSITION).contains("http", true)) {
             imageURL = "https://$url"
         }
         imageURL = url
