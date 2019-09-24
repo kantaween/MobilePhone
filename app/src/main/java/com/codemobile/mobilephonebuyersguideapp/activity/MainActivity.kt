@@ -53,6 +53,7 @@ class MainActivity : AppCompatActivity(), MainActivityPresenterInterface {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        presenter.init()
         onView()
         initFragment()
         handleViewPager()

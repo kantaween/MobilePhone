@@ -13,7 +13,6 @@ import retrofit2.Response
 class MainActivityPresenter(private val view: MainActivityPresenterInterface, private val service: MobileApiService) {
 
     companion object {
-
         private const val ERROR_MSG_ONLOAD_FAIL = "Load data fail"
 
         const val ALERTDIALOG_SORT_LOW2HIGH = 0
@@ -23,6 +22,11 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface, pr
 
     private lateinit var mFavouriteList: List<Mobile>
     private lateinit var mMobileList: List<Mobile>
+
+    fun init() {
+        mFavouriteList = listOf()
+        mMobileList = listOf()
+    }
 
     fun loadLocalData() {
         val gson = GsonBuilder().create()
@@ -44,7 +48,6 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface, pr
         val json = gson.toJson(mFavouriteList)
         Prefs.putString("Favourite", json)
     }
-
 
     fun handleSort(item: Int) {
         when (item) {
@@ -88,7 +91,7 @@ class MainActivityPresenter(private val view: MainActivityPresenterInterface, pr
         override fun onResponse(call: Call<List<Mobile>>, response: Response<List<Mobile>>) {
             val res = response.body()
             if (!res.isNullOrEmpty()) {
-                if (::mFavouriteList.isInitialized  && !mFavouriteList.isNullOrEmpty())
+                if (::mFavouriteList.isInitialized && !mFavouriteList.isNullOrEmpty())
                     mFavouriteList.forEach { prefData ->
                         res.singleOrNull { it.id == prefData.id }?.favourite = prefData.favourite
                     }
