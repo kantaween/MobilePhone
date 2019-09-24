@@ -1,16 +1,17 @@
 package com.codemobile.mobilephonebuyersguideapp.activity
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.R
 import com.codemobile.mobilephonebuyersguideapp.adapter.MobileImagePagerAdapter
+import com.codemobile.mobilephonebuyersguideapp.extension.showToast
 import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileInfoActivityPresenterInterface
+import com.codemobile.mobilephonebuyersguideapp.models.Mobile
 import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.service.ApiManager
@@ -45,6 +46,7 @@ class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInter
         onView()
         setActBar()
         presenter.init(intent)
+        presenter.loadMobileImages()
     }
 
     private fun onView() {
@@ -59,6 +61,10 @@ class MobileInfoActivity : AppCompatActivity(), MobileInfoActivityPresenterInter
     private fun setActBar() {
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun showErrorMsg(error: String) {
+        showToast(error, Toast.LENGTH_SHORT)
     }
 
     override fun setViewPagerAdapter(imageList: List<MobileImage>) {

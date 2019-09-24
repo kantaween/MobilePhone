@@ -6,4 +6,5 @@ import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
 interface MobileInfoActivityPresenterInterface {
     fun setViewPagerAdapter(imageList:List<MobileImage>)
     fun setContent(mobile: Mobile)
+    fun showErrorMsg(error: String)
 }

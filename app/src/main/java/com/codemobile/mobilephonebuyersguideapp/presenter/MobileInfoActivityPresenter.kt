@@ -1,7 +1,6 @@
 package com.codemobile.mobilephonebuyersguideapp.presenter
 
 import android.content.Intent
-import android.util.Log
 import com.codemobile.mobilephonebuyersguideapp.activity.MobileInfoActivity
 import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileInfoActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
@@ -11,34 +10,38 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MobileInfoActivityPresenter(private var view: MobileInfoActivityPresenterInterface, private val service: MobileApiService) {
+class MobileInfoActivityPresenter(
+    private var view: MobileInfoActivityPresenterInterface,
+    private val service: MobileApiService
+) {
+
+    companion object {
+        private const val ERROR_MSG_ONLOAD_IMAGE_FAIL = "Load image fail"
+    }
 
     private lateinit var mImageList: List<MobileImage>
     private lateinit var mMobile: Mobile
 
     fun init(intent: Intent) {
-        getMobileList(intent)
-        loadMobileImages(mMobile.id)
+        mMobile = intent.getParcelableExtra(MobileInfoActivity.EXTRA_MOBILE)
         view.setContent(mMobile)
     }
 
-    private fun getMobileList(intent: Intent) {
-        mMobile = intent.getParcelableExtra(MobileInfoActivity.EXTRA_MOBILE)
-    }
-
-    private fun loadMobileImages(id: Int) {
-        service.getMobileImage(id).enqueue(mobileImageCallback)
+    fun loadMobileImages() {
+        service.getMobileImage(mMobile.id).enqueue(mobileImageCallback)
     }
 
     private val mobileImageCallback = object : Callback<List<MobileImage>> {
         override fun onFailure(call: Call<List<MobileImage>>, t: Throwable) {
-            Log.e("Call Api", "$t")
+            view.showErrorMsg(ERROR_MSG_ONLOAD_IMAGE_FAIL)
         }
 
         override fun onResponse(call: Call<List<MobileImage>>, response: Response<List<MobileImage>>) {
             response.body()?.apply {
-                mImageList = this
-                view.setViewPagerAdapter(mImageList)
+                if (this.isNotEmpty()) {
+                    mImageList = this
+                    view.setViewPagerAdapter(mImageList)
+                }
             }
         }
     }

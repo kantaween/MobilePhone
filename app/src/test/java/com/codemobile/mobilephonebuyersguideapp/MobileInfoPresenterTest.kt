@@ -1,13 +1,15 @@
 package com.codemobile.mobilephonebuyersguideapp
 
-import com.codemobile.mobilephonebuyersguideapp.interfaces.MainActivityPresenterInterface
+import com.codemobile.mobilephonebuyersguideapp.interfaces.MobileInfoActivityPresenterInterface
 import com.codemobile.mobilephonebuyersguideapp.models.Mobile
-import com.codemobile.mobilephonebuyersguideapp.presenter.MainActivityPresenter
+import com.codemobile.mobilephonebuyersguideapp.models.MobileImage
+import com.codemobile.mobilephonebuyersguideapp.presenter.MobileInfoActivityPresenter
 import com.codemobile.mobilephonebuyersguideapp.service.MobileApiService
 import com.nhaarman.mockitokotlin2.*
 import mockit.Deencapsulation
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyString
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -24,62 +26,71 @@ import retrofit2.Response
 class MobileInfoPresenterTest {
 
     @Mock
-    lateinit var testView: MainActivityPresenterInterface
+    lateinit var testView: MobileInfoActivityPresenterInterface
 
     @Mock
     lateinit var service: MobileApiService
 
     @InjectMocks
-    lateinit var presenter: MainActivityPresenter
+    lateinit var presenter: MobileInfoActivityPresenter
 
-    private fun getMockMobile(id:Int = 1, price:Double = 100.0, rating: Double = 3.0, name: String = "any Name", favourite: Boolean = false) =
+    private fun getMockMobile(
+        id: Int = 1,
+        price: Double = 100.0,
+        rating: Double = 3.0,
+        name: String = "any Name",
+        favourite: Boolean = false
+    ) =
         Mobile("any brand", "any description", id, name, price, rating, "any Url", favourite)
+
+    private fun getMockImage() = MobileImage(1, 1, "https://www.any.jpg")
 
     @Before
     fun setup() {
         MockitoAnnotations.initMocks(this)
+        val mockMobile = getMockMobile()
+        Deencapsulation.setField(presenter, "mMobile", mockMobile)
     }
 
     @Test
-    fun testGetMobileList() {
+    fun testGetMobileImage() {
         //given
-        whenever(service.getMobileList()).thenReturn(mock())
+        whenever(service.getMobileImage(anyInt())).thenReturn(mock())
 
         //when
-        presenter.loadNewData()
+        presenter.loadMobileImages()
 
         //then
-        verify(service).getMobileList()
+        verify(service).getMobileImage(anyInt())
     }
 
     @Test
     fun testGetMobileListOnFailure() {
         //given
-        val call = mock<Call<List<Mobile>>>()
-        whenever(service.getMobileList()).thenReturn(call)
+        val call = mock<Call<List<MobileImage>>>()
+        whenever(service.getMobileImage(anyInt())).thenReturn(call)
         whenever(call.enqueue(any())).thenAnswer {
-            it.getArgument<Callback<List<Mobile>>>(0).onFailure(mock(), mock())
+            it.getArgument<Callback<List<MobileImage>>>(0).onFailure(mock(), mock())
         }
 
         //when
-        presenter.loadNewData()
+        presenter.loadMobileImages()
 
         //then
-        verify(testView).showErrorMessage(anyString())
-        // verifyNoMoreInteractions(testView)
+        verify(testView).showErrorMsg(anyString())
     }
 
     @Test
     fun testGetMobileListApiResponseBodyNull() {
         //given
-        val call = mock<Call<List<Mobile>>>()
-        whenever(service.getMobileList()).thenReturn(call)
+        val call = mock<Call<List<MobileImage>>>()
+        whenever(service.getMobileImage(anyInt())).thenReturn(call)
         whenever(call.enqueue(any())).thenAnswer {
-            it.getArgument<Callback<List<Mobile>>>(0).onResponse(mock(), Response.success(null))
+            it.getArgument<Callback<List<MobileImage>>>(0).onResponse(mock(), Response.success(null))
         }
 
         //when
-        presenter.loadNewData()
+        presenter.loadMobileImages()
 
         //then
         verifyZeroInteractions(testView)
@@ -88,17 +99,14 @@ class MobileInfoPresenterTest {
     @Test
     fun testGetMobileListApiResponseBodyEmptyList() {
         //given
-        val mockMobile1 = getMockMobile()
-        val mockFavouriteList = listOf(mockMobile1)
-        val call = mock<Call<List<Mobile>>>()
-        whenever(service.getMobileList()).thenReturn(call)
+        val call = mock<Call<List<MobileImage>>>()
+        whenever(service.getMobileImage(anyInt())).thenReturn(call)
         whenever(call.enqueue(any())).thenAnswer {
-            it.getArgument<Callback<List<Mobile>>>(0).onResponse(mock(), Response.success(listOf()))
+            it.getArgument<Callback<List<MobileImage>>>(0).onResponse(mock(), Response.success(listOf()))
         }
-        Deencapsulation.setField(presenter, "mFavouriteList", mockFavouriteList)
 
         //when
-        presenter.loadNewData()
+        presenter.loadMobileImages()
 
         //then
         verifyZeroInteractions(testView)
@@ -107,44 +115,19 @@ class MobileInfoPresenterTest {
     @Test
     fun testGetMobileListApiResponseBodyNoMatchIdWithFacouriteList() {
         //given
-        val mockMobile1 = getMockMobile(id = 1)
-        val mockMobile2 = getMockMobile(id = 2)
-        val mockFavouriteList = listOf(mockMobile1)
-        val responseData = listOf(mockMobile2)
-        val call = mock<Call<List<Mobile>>>()
-        whenever(service.getMobileList()).thenReturn(call)
+        val mockMobileImage = getMockImage()
+        val response = listOf(mockMobileImage)
+        val call = mock<Call<List<MobileImage>>>()
+        whenever(service.getMobileImage(anyInt())).thenReturn(call)
         whenever(call.enqueue(any())).thenAnswer {
-            it.getArgument<Callback<List<Mobile>>>(0).onResponse(mock(), Response.success(responseData))
+            it.getArgument<Callback<List<MobileImage>>>(0).onResponse(mock(), Response.success(response))
         }
-        Deencapsulation.setField(presenter, "mFavouriteList", mockFavouriteList)
 
         //when
-        presenter.loadNewData()
+        presenter.loadMobileImages()
 
         //then
-        verify(testView).updateData(responseData, mockFavouriteList)
+        verify(testView).setViewPagerAdapter(response)
     }
-
-    @Test
-    fun testGetMobileListApiResponseBodyHaveMatchIdWithFavouriteList() {
-        //given
-        val mockMobile1 = getMockMobile(id = 1, favourite = true)
-        val mockMobile2 = getMockMobile(id = 1, favourite = false)
-        val mockFavouriteList = listOf(mockMobile1)
-        val responseData = listOf(mockMobile2)
-        val call = mock<Call<List<Mobile>>>()
-        whenever(service.getMobileList()).thenReturn(call)
-        whenever(call.enqueue(any())).thenAnswer {
-            it.getArgument<Callback<List<Mobile>>>(0).onResponse(mock(), Response.success(responseData))
-        }
-        Deencapsulation.setField(presenter, "mFavouriteList", mockFavouriteList)
-
-        //when
-        presenter.loadNewData()
-
-        //then
-        verify(testView).updateData(mockFavouriteList, mockFavouriteList)
-    }
-
 
 }
